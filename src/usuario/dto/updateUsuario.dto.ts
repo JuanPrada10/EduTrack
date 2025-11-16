@@ -1,7 +1,7 @@
 import { IsEmail, IsEnum, IsOptional, IsString, Length } from 'class-validator';
 import { RolType } from '../interface/rolTypes';
 
-export class CreateUsuarioDto {
+export class UpdateUsuarioDto {
   @IsOptional()
   @IsString({ message: 'El nombre completo debe ser una cadena de texto' })
   @Length(3, 50, { message: 'El nombre es muy corto' })
