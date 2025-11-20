@@ -3,7 +3,6 @@ import { InscripcionService } from './inscripcion.service';
 import type { UUID } from 'crypto';
 import { Inscripcion } from './interface/inscripcion.interface';
 import { CreateInscripcionDto } from './dto/createInscripcion.dto';
-import path from 'path';
 import { UpdateInscripcionDto } from './dto/updateInscripcion.dto';
 
 @Controller('inscripcion')
