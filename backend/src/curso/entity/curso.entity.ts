@@ -25,7 +25,8 @@ export class CursoEntity {
 
   @ManyToOne(() => ProfesorEntity, (profesor) => profesor.cursos, {
     nullable: false,
-    onDelete: 'RESTRICT',
+    onDelete: 'CASCADE',
+    // eager: true,
   })
   @JoinColumn({ name: 'profesor_id' })
   profesor: ProfesorEntity;

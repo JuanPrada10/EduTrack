@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { InscripcionEntity } from './entity/inscripciones.entity';
@@ -10,60 +10,117 @@ import { UUID } from 'crypto';
 
 @Injectable()
 export class InscripcionService {
-    constructor(
-        @InjectRepository(InscripcionEntity)
-        private readonly inscripcionRepository: Repository<InscripcionEntity>,
+  private readonly logger = new Logger('InscripcionService');
+  constructor(
+    @InjectRepository(InscripcionEntity)
+    private readonly inscripcionRepository: Repository<InscripcionEntity>,
 
-        @InjectRepository(EstudianteEntity)
-        private readonly estudianteRepository: Repository<EstudianteEntity>,
+    @InjectRepository(EstudianteEntity)
+    private readonly estudianteRepository: Repository<EstudianteEntity>,
 
-        @InjectRepository(CursoEntity)
-        private readonly cursoRepository: Repository<CursoEntity>
-    ){}
+    @InjectRepository(CursoEntity)
+    private readonly cursoRepository: Repository<CursoEntity>,
+  ) {}
 
-    findAll(){
-        return this.inscripcionRepository.find({
-            relations: ['estudiante', 'curso'],
-        });
+  async findAll() {
+    try {
+      const inscripciones = await this.inscripcionRepository.find({
+        relations: ['estudiante', 'curso'],
+      });
+      if (!inscripciones || inscripciones.length === 0) {
+        throw new BadRequestException('No hay inscripciones registradas');
+      }
+      return inscripciones;
+    } catch (error) {
+      this.handlerError(error);
     }
+  }
 
-    findOne(id: string){
-        return this.inscripcionRepository.findOne({
-            where: {id},
-            relations: ['estudiante', 'curso'],
-        });
+  async findOne(id: string) {
+    try {
+      const inscripcion = await this.inscripcionRepository.findOne({
+        where: { id },
+        relations: ['estudiante', 'curso'],
+      });
+      if (!inscripcion) {
+        throw new BadRequestException('Inscripción no encontrada');
+      }
+      return inscripcion;
+    } catch (error) {
+      this.handlerError(error);
     }
+  }
 
-    async create(data: CreateInscripcionDto){
-        const estudiante = await this.estudianteRepository.findOne({
-            where: { id: data.estudianteId },
-        });
-        if (!estudiante) {
-            throw new BadRequestException('El estudiante no existe');
-        }
+  async create(data: CreateInscripcionDto) {
+    try {
+      const estudiante = await this.estudianteRepository.findOne({
+        where: { id: data.estudianteId },
+      });
+      if (!estudiante) {
+        throw new BadRequestException('El estudiante no existe');
+      }
 
-        const curso = await this.cursoRepository.findOne({
-            where: { id: data.cursoId },
-        });
+      const curso = await this.cursoRepository.findOne({
+        where: { id: data.cursoId },
+      });
 
-        if (!curso) {
-            throw new BadRequestException('El curso no existe');
-        }
+      if (!curso) {
+        throw new BadRequestException('El curso no existe');
+      }
 
-        const newInscripcion = this.inscripcionRepository.create({
-            estudiante,
-            curso,
-            nota: data.nota ?? 0,
-        });
-        return this.inscripcionRepository.save(newInscripcion);
+      const newInscripcion = this.inscripcionRepository.create({
+        estudiante,
+        curso,
+        nota: data.nota ?? 0,
+      });
+      await this.inscripcionRepository.save(newInscripcion);
+      return {
+        message: 'Inscripción creada exitosamente',
+        inscripcion: newInscripcion,
+      };
+    } catch (error) {
+      this.handlerError(error);
     }
+  }
 
-
-    update(inscripcion: UpdateInscripcionDto, id: UUID) {
-        return this.inscripcionRepository.update({ id }, {...inscripcion});
+  async update(inscripcion: UpdateInscripcionDto, id: UUID) {
+    try {
+      const updated = await this.inscripcionRepository.preload({
+        id: id,
+        ...inscripcion,
+      });
+      if (!updated) {
+        throw new BadRequestException('Inscripción no encontrada');
+      }
+      await this.inscripcionRepository.save(updated);
+      return {
+        message: 'Inscripción actualizada exitosamente',
+        inscripcion: updated,
+      };
+    } catch (error) {
+      this.handlerError(error);
     }
+  }
 
-    delete(id: UUID) {
-        return this.inscripcionRepository.delete({ id });
+  async delete(id: UUID) {
+    try {
+      const result = await this.inscripcionRepository.delete({ id });
+      if (result.affected === 0) {
+        throw new BadRequestException('Inscripción no encontrada');
+      }
+      return {
+        message: 'Inscripción eliminada exitosamente',
+      };
+    } catch (error) {
+      this.handlerError(error);
     }
+  }
+
+  private handlerError(error: any) {
+    if (error.code === '23505') {
+      throw new BadRequestException(error.detail);
+    }
+    this.logger.error(error);
+    throw new BadRequestException(error.message);
+  }
 }
