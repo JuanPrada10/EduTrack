@@ -8,14 +8,14 @@ export class UsuarioEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column('text')
-  nombre_completo: string;
+  @Column('text', { name: 'full_name' })
+  fullName: string;
 
   @Column('text', { unique: true })
-  correo: string;
+  email: string;
 
   @Column('text')
-  contrasena: string;
+  password: string;
 
   @Column({ type: 'enum', enum: RolType })
   rol: RolType;

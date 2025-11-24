@@ -1,37 +1,83 @@
-import { Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+  Logger,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UsuarioEntity } from './entity/usuario.entity';
-import { Repository } from 'typeorm';
+import { Not, Repository } from 'typeorm';
 import { CreateUsuarioDto } from './dto/createUsuario.dto';
 import { UpdateUsuarioDto } from './dto/updateUsuario.dto';
 import type { UUID } from 'crypto';
 import { Usuario } from './interface/usuario.interface';
+import bcrypt from 'bcrypt';
 
 @Injectable()
 export class UsuarioService {
+  private readonly logger = new Logger('UsuarioService');
   constructor(
     @InjectRepository(UsuarioEntity)
     private userRepositoy: Repository<UsuarioEntity>,
   ) {}
 
-  findAll() {
-    return this.userRepositoy.find();
+  async findAll() {
+    try {
+      const users = await this.userRepositoy.find();
+      if (!users || users.length === 0) {
+        throw new NotFoundException('No hay usuarios registrados');
+      }
+      return users;
+    } catch (error) {
+      this.handlerError(error);
+    }
+    return;
   }
 
-  findOne(id: UUID) {
-    return this.userRepositoy.findOneBy({ id });
+  async findOne(id: UUID) {
+    try {
+      const userFound = await this.userRepositoy.findOneBy({ id });
+      if (!userFound) {
+        throw new NotFoundException('Usuario no encontrado');
+      }
+      return userFound;
+    } catch (error) {
+      this.handlerError(error);
+    }
   }
 
-  create(user: CreateUsuarioDto) {
-    const newUser = this.userRepositoy.create(user);
-    return this.userRepositoy.save(newUser);
+  async create(user: CreateUsuarioDto) {
+    const { password, ...userData } = user;
+    try {
+      const newUser = await this.userRepositoy.create({
+        ...userData,
+        password: bcrypt.hashSync(password, 10),
+      });
+      await this.userRepositoy.save(newUser);
+      return {
+        user: {
+          ...userData,
+        },
+        message: 'Usuario creado exitosamente',
+      };
+    } catch (error) {
+      this.handlerError(error);
+    }
   }
 
-  update(user: UpdateUsuarioDto, id: UUID) {
+  async update(user: UpdateUsuarioDto, id: UUID) {
     return this.userRepositoy.update({ id }, { ...user });
   }
 
-  delete(id: UUID) {
+  async delete(id: UUID) {
     return this.userRepositoy.delete({ id });
+  }
+
+  private handlerError(error: any) {
+    if (error.code === '23505') {
+      throw new BadRequestException(error.detail);
+    }
+    this.logger.error(error);
+    throw new BadRequestException(error.message);
   }
 }

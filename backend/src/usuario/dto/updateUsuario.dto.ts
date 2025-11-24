@@ -5,18 +5,17 @@ export class UpdateUsuarioDto {
   @IsOptional()
   @IsString({ message: 'El nombre completo debe ser una cadena de texto' })
   @Length(3, 50, { message: 'El nombre es muy corto' })
-  nombre_completo: string;
+  fullName: string;
 
   @IsOptional()
   @IsEmail({}, { message: 'Correo no valido' })
-  correo: string;
-
+  email: string;
   @IsOptional()
   @IsString()
-  @Length(8, 50, {
-    message: 'La contrasena debe tener entre 8 y 50 caracteres',
+  @Length(3, 50, {
+    message: 'La contrasena debe tener entre 3 y 50 caracteres',
   })
-  contrasena: string;
+  password: string;
 
   @IsOptional()
   @IsEnum(RolType, { message: 'Rol no valido' })

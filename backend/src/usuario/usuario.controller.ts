@@ -18,17 +18,17 @@ export class UsuarioController {
   constructor(private readonly usuarioService: UsuarioService) {}
 
   @Get()
-  getUsers(): Promise<Usuario[]> {
+  getUsers() {
     return this.usuarioService.findAll();
   }
 
   @Get(':id')
-  getUser(@Param('id', ParseUUIDPipe) id: UUID): Promise<Usuario | null> {
+  getUser(@Param('id', ParseUUIDPipe) id: UUID) {
     return this.usuarioService.findOne(id);
   }
 
   @Post()
-  createUser(@Body() newUser: CreateUsuarioDto): Promise<Usuario> {
+  createUser(@Body() newUser: CreateUsuarioDto) {
     return this.usuarioService.create(newUser);
   }
 
