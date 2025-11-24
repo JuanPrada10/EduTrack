@@ -1,11 +1,11 @@
-import { Button } from "@/components/ui/button"
+import AppRouter from "@/router/AppRouter";
+import LoaderGlobal from "@/components/ui/LoaderGlobal";
+import { useLoader } from "@/hooks/useLoader";
 
 function App() {
-  return (
-    <div className="flex min-h-svh flex-col items-center justify-center">
-      <Button>Click me</Button>
-    </div>
-  )
+  const loading = useLoader();
+
+  return loading ? <LoaderGlobal /> : <AppRouter />;
 }
 
-export default App
+export default App;
