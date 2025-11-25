@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ProfesorEntity } from './entity/profesor.entity';
 import { Repository } from 'typeorm';
@@ -9,45 +9,105 @@ import { UpdateProfesorDto } from './dto/updateProfesor.dto';
 
 @Injectable()
 export class ProfesorService {
-    constructor(
-        @InjectRepository(ProfesorEntity)
-        private readonly profesorRepository: Repository<ProfesorEntity>,
+  private readonly logger = new Logger('ProfesorService');
+  constructor(
+    @InjectRepository(ProfesorEntity)
+    private readonly profesorRepository: Repository<ProfesorEntity>,
 
-        @InjectRepository(UsuarioEntity)
-        private readonly usuarioRepository: Repository<UsuarioEntity>
-    ) {}
+    @InjectRepository(UsuarioEntity)
+    private readonly usuarioRepository: Repository<UsuarioEntity>,
+  ) {}
 
-    findAll() {
-        return this.profesorRepository.find();
+  async findAll() {
+    try {
+      const profesors = await this.profesorRepository.find();
+      if (!profesors || profesors.length === 0) {
+        throw new BadRequestException('No hay profesores registrados');
+      }
+      return profesors;
+    } catch (error) {
+      this.handlerError(error);
     }
+  }
 
-    findOne(id: UUID) {
-        return this.profesorRepository.findOneBy({ id });
+  async findOne(id: UUID) {
+    try {
+      const userFound = await this.profesorRepository.findOneBy({ id });
+      if (!userFound) {
+        throw new BadRequestException('Profesor no encontrado');
+      }
+      return userFound;
+    } catch (error) {
+      this.handlerError(error);
     }
+  }
 
-    async create(data: CreateProfesorDto) {
-        const usuario = await this.usuarioRepository.findOne({ 
-            where: { id: data.usuarioId },
-         });
+  async create(data: CreateProfesorDto) {
+    try {
+      const usuario = await this.usuarioRepository.findOne({
+        where: { id: data.usuarioId },
+      });
 
-        if (!usuario) {
-            throw new BadRequestException('El usuario no existe');
-        }
+      if (!usuario) {
+        throw new BadRequestException('El usuario no existe');
+      }
+      if (usuario.rol === 'estudiante') {
+        throw new BadRequestException('El usuario no puede ser estudiante');
+      }
 
-        const newProfesor = this.profesorRepository.create({
-            especialidad: data.especialidad,
-            usuario: usuario,
-        });
+      const newProfesor = this.profesorRepository.create({
+        especialidad: data.especialidad,
+        usuario: usuario,
+      });
 
-        return this.profesorRepository.save(newProfesor);
+      await this.profesorRepository.save(newProfesor);
+      return {
+        message: 'Profesor creado exitosamente',
+        profesor: newProfesor,
+      };
+    } catch (error) {
+      this.handlerError(error);
     }
+  }
 
-    update(profesor: UpdateProfesorDto, id: UUID) {
-        return this.profesorRepository.update({ id }, { ...profesor });
+  async update(profesor: UpdateProfesorDto, id: UUID) {
+    try {
+      const updatedProfesor = await this.profesorRepository.preload({
+        id: id,
+        ...profesor,
+      });
+      if (!updatedProfesor) {
+        throw new BadRequestException('Profesor no encontrado');
+      }
+      await this.profesorRepository.save(updatedProfesor);
+      return {
+        message: 'Profesor actualizado exitosamente',
+        profesor: updatedProfesor,
+      };
+    } catch (error) {
+      this.handlerError(error);
     }
+  }
 
-
-    delete(id: UUID) {
-        return this.profesorRepository.delete({ id });
+  async delete(id: UUID) {
+    try {
+      const result = await this.profesorRepository.delete({ id });
+      if (result.affected === 0) {
+        throw new BadRequestException('Profesor no encontrado');
+      }
+      return {
+        message: 'Profesor eliminado exitosamente',
+      };
+    } catch (error) {
+      this.handlerError(error);
     }
+  }
+
+  private handlerError(error: any) {
+    if (error.code === '23505') {
+      throw new BadRequestException(error.detail);
+    }
+    this.logger.error(error);
+    throw new BadRequestException(error.message);
+  }
 }

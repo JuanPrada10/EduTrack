@@ -6,11 +6,11 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UsuarioEntity } from './entity/usuario.entity';
-import { Not, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { CreateUsuarioDto } from './dto/createUsuario.dto';
 import { UpdateUsuarioDto } from './dto/updateUsuario.dto';
 import type { UUID } from 'crypto';
-import { Usuario } from './interface/usuario.interface';
+// import { Usuario } from './interface/usuario.interface';
 import bcrypt from 'bcrypt';
 
 @Injectable()
@@ -66,11 +66,35 @@ export class UsuarioService {
   }
 
   async update(user: UpdateUsuarioDto, id: UUID) {
-    return this.userRepositoy.update({ id }, { ...user });
+    try {
+      const newUser = await this.userRepositoy.preload({
+        id: id,
+        ...user,
+      });
+      if (!newUser) {
+        throw new NotFoundException('Usuario no encontrado');
+      }
+      if (user.password) {
+        newUser.password = bcrypt.hashSync(user.password, 10);
+      }
+      await this.userRepositoy.save(newUser);
+      return {
+        message: 'Usuario actualizado exitosamente',
+      };
+    } catch (error) {
+      this.handlerError(error);
+    }
   }
 
   async delete(id: UUID) {
-    return this.userRepositoy.delete({ id });
+    try {
+      await this.userRepositoy.delete({ id });
+      return {
+        message: 'Usuario eliminado exitosamente',
+      };
+    } catch (error) {
+      this.handlerError(error);
+    }
   }
 
   private handlerError(error: any) {
