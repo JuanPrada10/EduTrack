@@ -12,6 +12,7 @@ import { UpdateUsuarioDto } from './dto/updateUsuario.dto';
 import type { UUID } from 'crypto';
 // import { Usuario } from './interface/usuario.interface';
 import bcrypt from 'bcrypt';
+import { ConfigModule } from '@nestjs/config';
 
 @Injectable()
 export class UsuarioService {
@@ -51,7 +52,7 @@ export class UsuarioService {
     try {
       const newUser = await this.userRepositoy.create({
         ...userData,
-        password: bcrypt.hashSync(password, 10),
+        password: bcrypt.hashSync(password, Number(process.env.BCRYPT_SALT)),
       });
       await this.userRepositoy.save(newUser);
       return {

@@ -14,7 +14,10 @@ export class UsuarioEntity {
   @Column('text', { unique: true })
   email: string;
 
-  @Column('text')
+  @Column('text', {
+    nullable: false,
+    select: false,
+  })
   password: string;
 
   @Column({ type: 'enum', enum: RolType })

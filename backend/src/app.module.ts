@@ -6,6 +6,7 @@ import { ProfesorModule } from './profesor/profesor.module';
 import { EstudianteModule } from './estudiante/estudiante.module';
 import { CursoModule } from './curso/curso.module';
 import { InscripcionModule } from './inscripcion/inscripcion.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { InscripcionModule } from './inscripcion/inscripcion.module';
     EstudianteModule,
     CursoModule,
     InscripcionModule,
+    AuthModule,
   ],
   controllers: [],
   providers: [],
