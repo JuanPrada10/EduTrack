@@ -24,43 +24,43 @@ export function SignupForm({
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card>
         <CardHeader className="text-center">
-          <CardTitle className="text-xl">Create your account</CardTitle>
+          <CardTitle className="text-xl">Crea tu cuenta</CardTitle>
           <CardDescription>
-            Enter your email below to create your account
+            Ingresa tu correo electrónico para crear tu cuenta
           </CardDescription>
         </CardHeader>
         <CardContent>
           <form>
             <FieldGroup>
               <Field>
-                <FieldLabel htmlFor="name">Full Name</FieldLabel>
-                <Input id="name" type="text" placeholder="John Doe" required />
+                <FieldLabel htmlFor="name">Nombre completo</FieldLabel>
+                <Input id="name" type="text" placeholder="Juan Pérez" required />
               </Field>
               <Field>
-                <FieldLabel htmlFor="email">Email</FieldLabel>
+                <FieldLabel htmlFor="email">Correo electrónico</FieldLabel>
                 <Input id="email" type="email" placeholder="m@example.com" required />
               </Field>
               <Field>
                 <Field className="grid grid-cols-2 gap-4">
                   <Field>
-                    <FieldLabel htmlFor="password">Password</FieldLabel>
+                    <FieldLabel htmlFor="password">Contraseña</FieldLabel>
                     <Input id="password" type="password" required />
                   </Field>
                   <Field>
                     <FieldLabel htmlFor="confirm-password">
-                      Confirm Password
+                      Confirmar contraseña
                     </FieldLabel>
                     <Input id="confirm-password" type="password" required />
                   </Field>
                 </Field>
                 <FieldDescription>
-                  Must be at least 8 characters long.
+                  Debe tener al menos 8 caracteres.
                 </FieldDescription>
               </Field>
               <Field>
-                <Button type="submit">Create Account</Button>
+                <Button type="submit">Crear cuenta</Button>
                 <FieldDescription className="text-center">
-                  Already have an account? <Link to="/">Sign in</Link>
+                  ¿Ya tienes una cuenta? <Link to="/">Iniciar sesión</Link>
                 </FieldDescription>
               </Field>
             </FieldGroup>
@@ -68,8 +68,8 @@ export function SignupForm({
         </CardContent>
       </Card>
       <FieldDescription className="px-6 text-center">
-        By clicking continue, you agree to our <a href="#">Terms of Service</a>{" "}
-        and <a href="#">Privacy Policy</a>.
+        Proyecto desarrollado para la gestión educativa EduTrack, creado por
+        <a href="https://github.com/JuanPrada10/EduTrack.git" target="_blank"> Cristian Romero y Juan Prada</a>
       </FieldDescription>
     </div>
   );
