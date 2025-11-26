@@ -1,4 +1,5 @@
-import { AppSidebar } from "@/components/app-sidebar"
+import React from "react";
+import { AppSidebar } from "@/components/app-sidebar";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -6,15 +7,24 @@ import {
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb"
-import { Separator } from "@/components/ui/separator"
+} from "@/components/ui/breadcrumb";
+import { Separator } from "@/components/ui/separator";
 import {
   SidebarInset,
   SidebarProvider,
   SidebarTrigger,
-} from "@/components/ui/sidebar"
+} from "@/components/ui/sidebar";
 
-export default function dashboard() {
+import { Outlet, useLocation } from "react-router-dom";
+
+export default function Dashboard() {
+
+  const location = useLocation();
+  const breadcrumb = location.pathname
+    .replace("/home", "")
+    .split("/").
+    filter(Boolean);
+
   return (
     <SidebarProvider>
       <AppSidebar />
@@ -29,27 +39,36 @@ export default function dashboard() {
             <Breadcrumb>
               <BreadcrumbList>
                 <BreadcrumbItem className="hidden md:block">
-                  <BreadcrumbLink href="#">
-                    Building Your Application
-                  </BreadcrumbLink>
+                  <BreadcrumbLink href="/home">Inicio</BreadcrumbLink>
                 </BreadcrumbItem>
-                <BreadcrumbSeparator className="hidden md:block" />
-                <BreadcrumbItem>
-                  <BreadcrumbPage>Data Fetching</BreadcrumbPage>
-                </BreadcrumbItem>
+                {breadcrumb.map((path, index) => {
+                  const isLast = index === breadcrumb.length - 1;
+                  return (
+                    <React.Fragment key={index}>
+                      <BreadcrumbSeparator />
+                      <BreadcrumbItem>
+                        {isLast ? (
+                          <BreadcrumbPage>
+                            {path.charAt(0).toUpperCase() + path.slice(1)}
+                          </BreadcrumbPage>
+                        ) : (
+                          <BreadcrumbLink href="#">
+                            {path}
+                          </BreadcrumbLink>
+                        )}
+                      </BreadcrumbItem>
+                    </React.Fragment>
+                  );
+                })}
               </BreadcrumbList>
             </Breadcrumb>
           </div>
         </header>
-        <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
-          <div className="grid auto-rows-min gap-4 md:grid-cols-3">
-            <div className="bg-muted/50 aspect-video rounded-xl" />
-            <div className="bg-muted/50 aspect-video rounded-xl" />
-            <div className="bg-muted/50 aspect-video rounded-xl" />
-          </div>
-          <div className="bg-muted/50 min-h-[100vh] flex-1 rounded-xl md:min-h-min" />
+
+        <div className="relative flex flex-1 flex-col">          
+          <Outlet />
         </div>
       </SidebarInset>
     </SidebarProvider>
-  )
+  );
 }
