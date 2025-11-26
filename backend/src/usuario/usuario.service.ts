@@ -10,7 +10,6 @@ import { Repository } from 'typeorm';
 import { CreateUsuarioDto } from './dto/createUsuario.dto';
 import { UpdateUsuarioDto } from './dto/updateUsuario.dto';
 import type { UUID } from 'crypto';
-// import { Usuario } from './interface/usuario.interface';
 import bcrypt from 'bcrypt';
 import { ConfigModule } from '@nestjs/config';
 
