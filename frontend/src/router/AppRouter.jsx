@@ -7,6 +7,7 @@ import Dashboard from "@/pages/dashboard/dashboard";
 import Home from "@/pages/dashboard/Home";
 import Profesores from "@/pages/dashboard/Profesores";
 import Estudiantes from "@/pages/dashboard/Estudiantes";
+import Feedback from "@/pages/dashboard/Feedback";
 
 export default function AppRouter() {
   return (
@@ -21,6 +22,7 @@ export default function AppRouter() {
               <Route index element={<Home />} />
               <Route path="profesores" element={<Profesores />} />
               <Route path="estudiantes" element={<Estudiantes />} />
+              <Route path="feedback" element={<Feedback />} />
             </Route>
 
 
