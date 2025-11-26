@@ -19,8 +19,6 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  register(userData: UpdateUsuarioDto) {}
-
   async login(userData: UserLoginDto) {
     const { email, password } = userData;
     const userFind = await this.usuarioRepository.findOne({
@@ -39,10 +37,6 @@ export class AuthService {
       rol: userFind.rol,
     };
     return {
-      details: {
-        userData: { id: userFind.id, email: userFind.email },
-        message: 'Login exitoso',
-      },
       token: await this.jwtService.sign(payLoad),
     };
   }
