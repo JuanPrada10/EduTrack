@@ -47,8 +47,12 @@ export class UsuarioService {
   }
 
   async create(user: CreateUsuarioDto) {
-    const { password, ...userData } = user;
+    const { password, email, ...userData } = user;
+
     try {
+      const isExisting = await this.userRepositoy.findOne({ where: { email } });
+      if (!isExisting)
+        throw new BadRequestException('El correo ya está en uso');
       const newUser = await this.userRepositoy.create({
         ...userData,
         password: bcrypt.hashSync(password, Number(process.env.BCRYPT_SALT)),
