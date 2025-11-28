@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { LoginRequest, RegisterRequest, createTipoUsuario } from "@/api/auth";
 import { jwtDecode } from "jwt-decode";
 import { AuthContext } from "@/context/context";
@@ -7,6 +7,22 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [error, setError] = useState("");
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      try {
+        const decoded = jwtDecode(token);
+        setUser(decoded);
+        setIsAuthenticated(true);
+      } catch (e) {
+        console.error("Token inválido al inicializar:", e);
+        localStorage.removeItem("token");
+        setUser(null);
+        setIsAuthenticated(false);
+      }
+    }
+  }, []);
 
   const signIn = async (credencials) => {
     try {
