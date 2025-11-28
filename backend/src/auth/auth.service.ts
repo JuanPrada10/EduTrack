@@ -22,7 +22,7 @@ export class AuthService {
   async login(userData: UserLoginDto) {
     const { email, password } = userData;
     const userFind = await this.usuarioRepository.findOne({
-      select: { id: true, email: true, password: true },
+      select: { id: true, email: true, password: true, rol: true },
       where: { email },
     });
 

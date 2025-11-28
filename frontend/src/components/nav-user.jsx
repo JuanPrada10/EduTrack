@@ -7,11 +7,7 @@ import {
   Sparkles,
 } from "lucide-react";
 
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -28,15 +24,17 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 
-import { useNavigate } from "react-router-dom"; // ← IMPORTANTE
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/context/context";
 
 export function NavUser({ user }) {
+  const { signOut } = useAuth();
   const { isMobile } = useSidebar();
-  const navigate = useNavigate(); // ← HOOK PARA NAVEGAR
+  const navigate = useNavigate();
 
   const handleLogout = () => {
-    // Aquí más adelante borrarás tokens, limpiarás context, etc.
-    navigate("/"); // Te envía al login ("/") o cambia a "/login" si lo prefieres
+    signOut();
+    navigate("/");
   };
 
   return (

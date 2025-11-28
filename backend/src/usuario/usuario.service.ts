@@ -51,16 +51,19 @@ export class UsuarioService {
 
     try {
       const isExisting = await this.userRepositoy.findOne({ where: { email } });
-      if (!isExisting)
-        throw new BadRequestException('El correo ya está en uso');
+      if (isExisting) throw new BadRequestException('El correo ya está en uso');
       const newUser = await this.userRepositoy.create({
         ...userData,
+        email,
         password: bcrypt.hashSync(password, Number(process.env.BCRYPT_SALT)),
       });
       await this.userRepositoy.save(newUser);
       return {
         user: {
-          ...userData,
+          id: newUser.id,
+          fullName: newUser.fullName,
+          email: newUser.email,
+          rol: newUser.rol,
         },
         message: 'Usuario creado exitosamente',
       };
