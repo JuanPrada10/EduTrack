@@ -126,7 +126,7 @@ export function SignupForm({ className, ...props }) {
                   </Field>
                 </Field>
                 <FieldDescription>
-                  Debe tener al menos 8 caracteres.
+                  Debe tener al menos 5 caracteres.
                 </FieldDescription>
               </Field>
               <Field>

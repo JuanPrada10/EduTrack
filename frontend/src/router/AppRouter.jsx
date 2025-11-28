@@ -5,7 +5,7 @@ import NotFound from "@/pages/NotFound";
 
 import Dashboard from "@/pages/dashboard/dashboard";
 import Home from "@/pages/dashboard/Home";
-import Profesores from "@/pages/dashboard/Profesores";
+import Profesores from "@/pages/dashboard/Profesores/Profesores";
 import Estudiantes from "@/pages/dashboard/Estudiantes";
 import Feedback from "@/pages/dashboard/Feedback";
 import { AuthProvider } from "@/context/AuthContext";
