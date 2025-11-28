@@ -21,15 +21,15 @@ export default function AppRouter() {
           <Route path="/register" element={<Register />} />
 
           {/* DASHBOARD */}
-          <Route path="/home" element={<Dashboard />}>
-            <Route
-              index
-              element={
-                <PrivateRoute>
-                  <Home />
-                </PrivateRoute>
-              }
-            />
+          <Route
+            path="/home"
+            element={
+              <PrivateRoute>
+                <Dashboard />
+              </PrivateRoute>
+            }
+          >
+            <Route index element={<Home />} />
             <Route path="profesores" element={<Profesores />} />
             <Route path="estudiantes" element={<Estudiantes />} />
             <Route path="feedback" element={<Feedback />} />
