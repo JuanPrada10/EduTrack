@@ -22,6 +22,7 @@ export class EstudianteEntity {
   @OneToOne(() => UsuarioEntity, (usuario) => usuario.estudiante, {
     nullable: false,
     onDelete: 'CASCADE',
+    eager: true,
   })
   @JoinColumn({ name: 'usuario_id' })
   usuario: UsuarioEntity;

@@ -24,6 +24,11 @@ export class InscripcionController {
   getInscripciones() {
     return this.inscripcionService.findAll();
   }
+  // @Get('table')
+  // @Auth()
+  // getTableInscripciones() {
+  //   return this.inscripcionService.tableInscripciones();
+  // }
 
   @Get(':id')
   @Auth()

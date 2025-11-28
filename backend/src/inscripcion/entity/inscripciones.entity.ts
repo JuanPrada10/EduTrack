@@ -26,6 +26,7 @@ export class InscripcionEntity {
   @ManyToOne(() => EstudianteEntity, (estudiante) => estudiante.inscripciones, {
     nullable: false,
     onDelete: 'CASCADE',
+    eager: true,
   })
   @JoinColumn({ name: 'estudiante_id' })
   estudiante: EstudianteEntity;
@@ -33,6 +34,7 @@ export class InscripcionEntity {
   @ManyToOne(() => CursoEntity, (curso) => curso.inscripciones, {
     nullable: false,
     onDelete: 'CASCADE',
+    eager: true,
   })
   @JoinColumn({ name: 'curso_id' })
   curso: CursoEntity;
