@@ -9,6 +9,7 @@ import Profesores from "@/pages/dashboard/Profesores";
 import Estudiantes from "@/pages/dashboard/Estudiantes";
 import Feedback from "@/pages/dashboard/Feedback";
 import { AuthProvider } from "@/context/AuthContext";
+import { PrivateRoute } from "@/pages/auth/PrivateRoute";
 
 export default function AppRouter() {
   return (
@@ -21,7 +22,14 @@ export default function AppRouter() {
 
           {/* DASHBOARD */}
           <Route path="/home" element={<Dashboard />}>
-            <Route index element={<Home />} />
+            <Route
+              index
+              element={
+                <PrivateRoute>
+                  <Home />
+                </PrivateRoute>
+              }
+            />
             <Route path="profesores" element={<Profesores />} />
             <Route path="estudiantes" element={<Estudiantes />} />
             <Route path="feedback" element={<Feedback />} />

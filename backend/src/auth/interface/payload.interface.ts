@@ -4,4 +4,5 @@ export interface Payload {
   id: string;
   rol: RolType;
   email: string;
+  fullName: string;
 }

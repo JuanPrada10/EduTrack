@@ -14,6 +14,7 @@ export const AuthProvider = ({ children }) => {
       const { token } = res.data;
       localStorage.setItem("token", token);
       const decoded = jwtDecode(token);
+      console.log(decoded);
       setUser(decoded);
       setIsAuthenticated(true);
     } catch (e) {
@@ -21,6 +22,7 @@ export const AuthProvider = ({ children }) => {
       console.log(error);
     }
   };
+
   const signUp = async (user) => {
     try {
       const createUser = {
